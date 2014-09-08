@@ -120,6 +120,13 @@ END;
                                                             <td>[% args.holdings.0.label | html %]</td>
                                                         </tr>
                                                         [% END %]
+                                                        [% IF args.ezproxy %]
+                                                        <tr name='bib_uri_list' class='result_table_title_cell'>
+                                                            <td valign='top'>
+                                                                <a href="[% args.uris.0.href %]">[% args.uris.0.link %]</a>
+                                                            </td>
+                                                        </tr>
+                                                        [% END %]
 
                                                         [% IF args.summaries %]
                                                         <tr name='bib_summary' class='result_table_summary'>
