@@ -131,13 +131,29 @@ END;
                                                         [% IF args.summaries %]
                                                         <tr name='bib_summary' class='result_table_summary'>
                                                             <td valign='top' colspan='2'>
+                                                                [% args.summaries.0 | truncate(200) %]
+                                                            </td>
+                                                        </tr>
+                                                        [% END %]
+
+                                                        [% IF args.summaries %]
+                                                        <tr name='bib_summary_full' class='result_table_summary'>
+                                                            <td valign='top' colspan='2'>
                                                                 [% args.summaries.0 | html %]
                                                             </td>
                                                         </tr>
                                                         [% END %]
 
-                                                        [% IF args.contents %]
+                                                        [% IF args.contents && args.summaries.size < 1 %]
                                                         <tr name='bib_contents' class='result_table_summary'>
+                                                            <td valign='top' colspan='2' class='result_table_summary'>
+                                                                [% args.contents.0 | truncate(200) %]
+                                                            </td>
+                                                        </tr>
+                                                        [% END %]
+
+                                                        [% IF args.contents %]
+                                                        <tr name='bib_contents_full' class='result_table_summary'>
                                                             <td valign='top' colspan='2' class='result_table_summary'>
                                                                 [% args.contents.0 | html %]
                                                             </td>
