@@ -5,13 +5,19 @@
     limit = ctx.bookbags_limit;
     offset = ctx.bookbags_offset;
     item_page = ctx.bookbags_item_page;
+    bb_publish_text = l(
+"Sharing a list means that the contents " _
+"of the list will be visible to others. " _
+"To see the public view of a shared list, " _
+"click on the HTML View link in the Saved Lists section.");
 %]
+<h3 class="sr-only">[% l('My Lists') %]</h3>
 <div id='myopac_bookbag_div' style="padding:5px;">
 
     <!-- new list creation -->
     <form action="[% mkurl(ctx.opac_root _ '/myopac/list/update') %]" method="post" id="create_form">
         <h1>[% l('Create New List') %]</h1><a name="createnewlist"></a>
-        <table cellpadding="0" border="0" id="list_create_table">
+        <table class="table_no_cell_pad" id="list_create_table">
             <tr>
                 <td>
                     <label for="list_create_name">[% l('Enter the name of the new list:') %]</label>
@@ -33,8 +39,12 @@
                         <option value="0">[% l('No') %]
                         <option value="1">[% l('Yes') %]
                     </select>
-                    <a href="javascript:void(0);" onclick="alert(document.getElementById('bb_publish_text').innerHTML);"><img alt="[% l('Sharing Help') %]"
-                        src="[% ctx.media_prefix %]/images/question-mark.png" /></a>
+                    <a href="javascript:void(0);" 
+                        onclick="alert('[% bb_publish_text %]')">
+                        <img alt="[% l('Sharing Help') %]"
+                            [% html_text_attr('title', bb_publish_text) %]
+                            src="[% ctx.media_prefix %]/images/question-mark.png" />
+                    </a>
                 </td>
                 <td class="list-create-table-buttons">
                     <input type="submit"
@@ -274,14 +284,14 @@
         <form action="[% mkurl(ctx.opac_root _ '/myopac/list/update') %]" method="post">
         <input type="hidden" name="list" value="[% bbag.id %]" />
         <input type="hidden" name="sort" value="[% CGI.param('sort') | uri %]" />
-        <table class="bookbag-specific" cellpadding='0' cellspacing='0' border='0'>
+        <table class="bookbag-specific table_no_cell_pad table_no_border_space table_no_border">
             <thead id="acct_list_header">
                 <tr>
                     <td class="list_checkbox">
-                    <input type="checkbox" onclick="
-                        var inputs=document.getElementsByTagName('input'); 
+                    <input type="checkbox" 
+                      onclick="var inputs=document.getElementsByTagName('input'); 
                         for (i = 0; i < inputs.length; i++) { 
-                            if (inputs[i].name == 'selected_item' && !inputs[i].disabled && inputs[i].getAttribute('bbag') == [% bbag.id %]) 
+                            if (inputs[i].name == 'selected_item' &amp;&amp; !inputs[i].disabled &amp;&amp; inputs[i].getAttribute('bbag') == [% bbag.id %]) 
                                 inputs[i].checked = this.checked;}"/>
 
                     </td>
@@ -450,12 +460,5 @@
         [% END %]
     </div>
     [% END %]
-
-    <span id='bb_publish_text' class='hide_me'>
-[% l("Sharing a Bookbag means that the contents " _
-"of the Bookbag will be visible to others. " _
-"To see the public view of a shared Bookbag, " _
-"click on the Bookbag's name in the Bookbag list.") %]
-    </span>
 </div>
 [% END %]

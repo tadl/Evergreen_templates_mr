@@ -1,9 +1,13 @@
 [%  PROCESS "opac/parts/misc_util.tt2";
     PROCESS "opac/parts/hold_error_messages.tt2";
+    PROCESS "opac/parts/metarecord_hold_filters.tt2";
 %]
 
 <div id='holds_box' class='canvas' style='margin-top: 6px;'>
     <h1>[% l('Place Hold') %]</h1>
+
+    [% some_holds_allowed = -1 %]
+      
     <form method="post">
         <input type="hidden" name="hold_type" value="[% CGI.param('hold_type') | html %]" />
         [%  
@@ -22,8 +26,17 @@
             <label for="hold_usr_is_requestor_not">
                 [% l("Place hold for patron by barcode:") %]
             </label>
-            <input type="text" name="hold_usr" id="hold_usr_input" onchange="staff_hold_usr_barcode_changed();" onpaste="setTimeout(staff_hold_usr_barcode_changed,1);" onkeypress="return no_hold_submit(event)" autofocus /> <span id="patron_name"></span><span id="patron_usr_barcode_not_found" style="display: none">[% l('Patron barcode was not found') %]</span><br />
-            <input type="hidden" id="staff_barcode" value="[% ctx.staff_recipient.card.barcode | html %]"/>
+            <input type="text" name="hold_usr" id="hold_usr_input" 
+              value="[% CGI.param('usr_barcode') | html %]"
+              onchange="staff_hold_usr_barcode_changed();" 
+              onpaste="setTimeout(staff_hold_usr_barcode_changed,1);" 
+              onkeypress="return no_hold_submit(event)" autofocus /> 
+            <span id="patron_name"></span>
+            <span id="patron_usr_barcode_not_found" style="display: none">
+              [% l('Patron barcode was not found') %]
+            </span><br />
+            <input type="hidden" id="staff_barcode" 
+              value="[% ctx.staff_recipient.card.barcode | html %]"/>
             <span>
                 <input type="radio" id="hold_usr_is_requestor"
                     onchange="staff_hold_usr_input_disabler(this);"
@@ -39,12 +52,25 @@
         <table id='hold-items-list'>
         [% FOR hdata IN ctx.hold_data;
             attrs = {marc_xml => hdata.marc_xml};
-            PROCESS get_marc_attrs args=attrs %]
+            PROCESS get_marc_attrs args=attrs;
+            this_hold_disallowed = 0;
+
+            IF CGI.param('hold_type') == 'M';
+              IF hdata.metarecord_filters.formats.size == 0;
+                this_hold_disallowed = 1;
+                # if this is the first hold and it's disallowed, 
+                # assume all holds are, until we proven otherwise
+                SET some_holds_allowed = 0 IF some_holds_allowed == -1;
+              ELSE; some_holds_allowed = 1; END;
+            END %]
+
             <tr>
                 <td>
+                    [% IF !this_hold_disallowed %]
                     <input type="hidden" name="hold_target" value="[% hdata.target.id | html %]" />
+                    [% END %]
                     <div class='hold-items-list-title'>[% attrs.title_extended | html %]</div>
-                    [% IF hdata.parts %]
+                    [% IF hdata.parts AND !this_hold_disallowed %]
                         [% IF hdata.parts.size > 0 %]
                         <div style='padding-left: 10px'>
                             <span><label for='select_hold_part'>[%
@@ -63,10 +89,44 @@
                         <input type='hidden' name='part' value=''/>
                         [% END %]
                     [% END %]
+                    [% IF NOT metarecords.disabled %]
+                        [% IF CGI.param('hold_type') == 'T' AND hdata.record.metarecord %]
+                        <!-- Grab the bre_id so that we can restore it if user accidentally clicks advanced options -->
+                            [% bre_id = hdata.target.id %]
+                            <a  id='advanced_hold_link'
+                                href="[% mkurl('', {hold_type => 'M', hold_target => hdata.record.metarecord.id, bre_id => bre_id}) %]">
+                                [% l('Advanced Hold Options') %]</a>
+                        [% END %]
+                        [% IF CGI.param('hold_type') == 'M' AND CGI.param('bre_id') %]
+                            <input type="hidden" name="bre_id" value="[% CGI.param('bre_id') %]" />
+                            <a id='basic_hold_link'
+                               href="[% mkurl('', {hold_target => CGI.param('bre_id'), hold_type => 'T'}) %]">
+                                [% l('Go Back') %]</a>
+                        [% END %]
+                        [% IF hdata.metarecord_filters.formats.size OR # should this be size > 1
+                            (hdata.metarecord_filters.langs.size && hdata.metarecord_filters.langs.size > 1);
+                            PROCESS metarecord_hold_filters_selector hold_data=hdata;
+                        END;
+                    END %]
                 </td>
             </tr>
+
+            [% IF this_hold_disallowed %]
+              <tr><td>
+                <div class="mr_holds_no_formats">
+                [% l('This item does not have any formats available for holds placement') %]
+                </div>
+              </td></tr>
+            [% END %]
+
+            [%  IF !loop.last AND ctx.hold_data.size > 1 %]
+            <tr class="holds_item_row_separator"><td> </td></tr>
+            [% END %]
+
         [% END %]
         </table>
+
+        [% IF some_holds_allowed %]
 
         <p>
             [%- org_select_id = 'pickup_lib'; -%]
@@ -83,7 +143,7 @@
                     [% IF !ctx.user.email %]disabled="true"[% ELSIF ctx.default_email_notify %]checked="checked"[% END %]/>
                     <label for="email_notify">[% l('Yes, by Email') %]</label><br/>
                 <blockquote>
-                    [% IF !ctx.user.email; l('No configured Email address. See "My Account" for setting your Email address.');
+                    [% IF !ctx.user.email and !ctx.is_staff; l('No configured Email address. See "My Account" for setting your Email address.');
                      ELSE; l('Email Address:') %] <span name="email_address">[% ctx.user.email %]</span>[% END %]
                 </blockquote>
                 [%- IF allow_phone_notifications == 'true' %]
@@ -107,10 +167,11 @@
                 [% END %]
             </blockquote>
         </p>
-        <input id="place_hold_submit" type="submit" name="submit" value="[% l('Submit') %]" title="[% l('Submit') %]"
+        <input id="place_hold_submit" type="submit" name="submit" 
+            value="[% l('Submit') %]" title="[% l('Submit') %]"
             alt="[% l('Submit') %]" class="opac-button" />
-        <input type="reset" name="cancel" onclick="javascript:history.go(-1);"
-            value="[% l('Cancel') %]" id="holds_cancel" class="opac-button" />
+        [% END # some_holds_allowed %]
+        <input type="reset" name="cancel" onclick="window.location='[% redirect | html %]'" value="[% l('Cancel') %]" id="holds_cancel" class="opac-button" />
     </form>
 </div>
 

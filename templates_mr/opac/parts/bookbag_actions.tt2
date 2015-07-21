@@ -4,7 +4,7 @@
 
     # Wrap a url to open in a new tab in staff client.
     MACRO opac_wrap(url) BLOCK;
-    	  IF ctx.is_staff;
+    	  IF ctx.is_staff AND NOT ctx.is_browser_staff;
               # void(0) to return false and not go to new page in current tab.
               "javascript:xulG.new_tab(xulG.urls.XUL_OPAC_WRAPPER, {}, {'opac_url' : 'oils://remote" _ url _ "'});void(0);";
           ELSE;
@@ -22,6 +22,8 @@
         rec_anchor => ctx.bre_id;
     END;
 
+    record_title = attrs.title; # same for either context
+
     IF ctx.user_setting_map.defined(dsetting);
         default_list = ctx.user_setting_map.$dsetting;
     END;
@@ -36,7 +38,9 @@
 %]
 <ul class="popmenu">
     <li><a href="#" class="no-dec">
-          <img src="[% ctx.media_prefix %]/images/clipboard.png" alt="" />
+          <img src="[% ctx.media_prefix %]/images/clipboard.png" 
+              [% html_text_attr('alt', 
+                l('Add item to a list: [_1]', record_title)) %]/>
           [% l("Add to my list") %]
         </a>
     <ul>
@@ -76,8 +80,8 @@
     <li>
         <a href="[% opac_wrap(mkurl(ctx.opac_root _ '/myopac/lists', {
             limit => ctx.bookbag_count, add_rec => ctx.bre_id,
-            anchor => rec_anchor
-        })) %]">
+            anchor => rec_anchor })) %]"
+           title="[% l('See all of my lists') %]">
         [% l('See All') %]
         </a>
     </li>

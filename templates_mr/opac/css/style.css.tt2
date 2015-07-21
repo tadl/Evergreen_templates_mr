@@ -121,7 +121,6 @@ div.select-box-wrapper {
 
 #dash_user {
     font-weight: bold;
-    text-transform: capitalize;
 }
 
 #logout_link { left: 1px; }
@@ -129,7 +128,15 @@ div.select-box-wrapper {
 #dash_checked { color: [% css_colors.text_attention %]; }
 #dash_holds { color: [% css_colors.text_attention %]; }
 #dash_pickup { color: [% css_colors.text_goodnews %]; }
+
+/*  
 #dash_fines { color: [% css_colors.text_badnews %]; }
+the color contrast between "text_badnews" and "primary"
+is too low for WCAG compliance.  Use "text_attention" 
+for now until a better color is picked - if needed.
+*/
+#dash_fines { color: [% css_colors.text_attention %]; }
+
 #header-wrap {
     background: linear-gradient([% css_colors.primary %], [% css_colors.primary_fade %]);
     background: -moz-linear-gradient([% css_colors.primary %], [% css_colors.primary_fade %]);
@@ -287,12 +294,12 @@ div.select-box-wrapper {
 #adv_search_rows {
     border-bottom: none;
 }
-#adv_filter_block {
+.adv_filter_block {
     padding: 15px;
     float: left;
     clear: both;
 }
-#adv_filter_block_item {
+.adv_filter_block_item {
     float: left;
     padding: 5px;
 }
@@ -349,6 +356,10 @@ div.select-box-wrapper {
 
 #acct_select, #acct_prefs_select {
      display: none;
+}
+
+#mobile_acct_search_links {
+      background: [% css_colors.primary_fade %];
 }
 
 .rdetail_header {
@@ -482,7 +493,6 @@ div.format_icon {
     background-color: [% css_colors.accent_lighter2 %];
     padding: 13px 0px 13px 13px;
     font-size: [% css_fonts.size_smaller %];
-    text-transform: uppercase;
     font-weight: bold;
     text-align: left;
 }
@@ -519,7 +529,6 @@ div.format_icon {
 .rdetail_extras_link {
     padding: 6px 12px;
     font-size: [% css_fonts.size_smaller %];
-    text-transform: uppercase;
     font-weight: bold;
 }
 
@@ -692,6 +701,20 @@ collapse correctly when the window width decreases */
     color:[% css_colors.primary_fade %];
 }
 
+.table_no_border_space {
+  border-spacing: 0px;
+}
+.table_no_cell_pad td {
+  padding: 0px;
+}
+.table_no_border {
+  border-collapse: collapse;
+}
+
+#result_table_table {
+  margin-top:10px;
+}
+
 #result_table_div {
     margin-top: 1em;
 }
@@ -738,7 +761,6 @@ div.result_table_utils_cont {
 }
 
 .icon_text {
-    text-transform:capitalize;
 }
 
 #myopac_summary_div p {
@@ -758,16 +780,13 @@ div.result_table_utils_cont {
 }
 
 #zero_hits_term {
-    text-transform: uppercase;
     font-weight: bold;
 }
 
 #zero_search_hits #spell_check_link {
-    text-transform: uppercase;
 }
 
 #zero_search_hits #zero_hits_suggestions {
-    text-transform: uppercase;
 }
 
 #lowhits_help {
@@ -823,9 +842,6 @@ div.result_table_utils_cont {
 .acct_sum_table {
     border-collapse: collapse;
     background: [% css_colors.accent_ultralight %];
-    font-size: [% css_fonts.size_smaller %];
-    font-weight: bold;
-    text-transform: uppercase;
 }
 
 .acct_sum_table tr {
@@ -880,11 +896,15 @@ table.acct_notes th {
 }
 
 #acct_checked_main_header, #acct_holds_main_header, #acct_checked_hist_header, #acct_list_header, #acct_list_header_anon, #temp_list_holds {
-    font-weight:bold;
-    text-transform:uppercase;
-    font-size: [% css_fonts.size_smaller %];
     border-collapse: collapse;
 }
+
+.hold_notes {
+    text-transform: none;
+    font-weight: normal;
+}
+
+.hold_note_title { font-weight: bold; }
 
 #acct_checked_main_header td, #acct_holds_main_header td, #acct_checked_hist_header td, #acct_list_header td, #acct_list_header_anon td, #temp_list_holds td {
     background: [% css_colors.accent_lighter2 %];
@@ -899,13 +919,6 @@ table.acct_notes th {
 #acct_list_header select, #acct_list_header_anon select {
     font-weight:normal;
     text-transform:none;
-}
-
-#acct_holds_activates_table label {
-    font-weight: bold;
-    font-size: [% css_fonts.size_small %];
-    text-transform:uppercase;
-    padding-right: 5px;
 }
 
 .search_catalog_lbl {
@@ -973,6 +986,7 @@ table.acct_notes th {
 div.adv_search_available {
     margin-top: 1em;
 }
+
 #myopac_loading {
     width:100%;
     text-align:center;
@@ -1036,6 +1050,13 @@ div#facet_sidebar {
     float:left;
     padding-top:6px;
     padding-left:12px;
+}
+
+/* in this context, where h4 is primarily for structure, 
+   avoid the normal large font and margin for h4's */
+.facet_box_temp h4 {
+    font-size : 100%; 
+    margin: 0px;
 }
 
 .facet_box_temp .header a.button {
@@ -1103,9 +1124,7 @@ div#facet_sidebar {
 }
 
 .color_4 {
-    text-transform: uppercase;
     font-weight: bold;
-    font-size: [% css_fonts.size_smaller %];
 }
 
 .advanced_div { padding-top: 15px; }
@@ -1169,7 +1188,10 @@ a.dash-link:hover { text-decoration: underline !important; }
 
 .text-right { text-align: right; }
 .text-right-top { text-align: right; vertical-align: top; }
-.rdetail-author-div { padding-bottom: 10px; }
+.rdetail-author-div {
+    padding-bottom: 10px;
+    display: inline-block;
+}
 
 .invisible { visibility: hidden; }
 .rdetail-extras-summary { margin: 10px; }
@@ -1178,8 +1200,10 @@ a.dash-link:hover { text-decoration: underline !important; }
 .expert-search-row { padding-top: 10px; }
 #adv_expert_row label { font-weight: bold; }
 
-.bookshelf thead tr td {
+.bookshelf tr.browse_border td {
     border-bottom: 1px dashed [% css_colors.accent_dark %];
+    font-size: 1px;
+    height: 1px;
     padding-bottom: 1ex;
 }
 .cn_browse_item { padding: 2ex; }
@@ -1190,6 +1214,19 @@ a.dash-link:hover { text-decoration: underline !important; }
 #hold-items-list td { padding: 5px; margin-bottom: 20px; }
 .hold-items-list-title { font-size: [% css_fonts.size_bigger %]; }
 .hold-items-list-problem { color: [% css_colors.text_alert %]; }
+
+.mr_holds_no_formats { 
+  padding: 5px;
+  margin-left: 25px;
+  font-size: 110%;
+  font-weight: bold;
+  color: [% css_colors.text_invert %]; 
+  background: [% css_colors.primary %];
+}
+ 
+.holds_item_row_separator td {
+  border-top: 2px dashed [% css_colors.accent_medium %];
+}
 
 .big-strong {font-weight: bold; font-size: [% css_fonts.size_bigger %]; }
 
@@ -1669,6 +1706,10 @@ a.preflib_change {
     font-size: [% css_fonts.size_bigger %];
 }
 
+.mobile_view {
+   display:none;
+}
+
 @media only screen and (max-width: 800px) {
     .facet_sidebar_hidden, .result_block_hidden {
         display: none;
@@ -2000,4 +2041,31 @@ a.preflib_change {
         table#acct_holds_main_header td:nth-of-type(7):before { content: "[% l('Cancel on') %]"; }
         table#acct_holds_main_header td:nth-of-type(8):before { content: "[% l('Active') %]"; }
         table#acct_holds_main_header td:nth-of-type(9):before { content: "[% l('Status') %]"; }
+        table#acct_holds_main_header td.hold_notes:before { content: "[% l('Notes') %]"; }
+
+       /*Want to see these in mobile ONLY */
+       .mobile_view{
+          display:block;
+       }
+
+       .mobile_search_lbl_clr{
+          color:[% css_colors.mobile_header_text %];
+       }
 }
+
+
+/* 
+For text which is visible only to screen readers.
+Borrowed from http://getbootstrap.com/css/#helper-classes-screen-readers 
+See also http://webaim.org/techniques/css/invisiblecontent/
+*/
+.sr-only {                                                                     
+    position: absolute;                                                          
+    width: 1px;                                                                  
+    height: 1px;                                                                 
+    padding: 0;                                                                  
+    margin: -1px;                                                                
+    overflow: hidden;                                                            
+    clip: rect(0, 0, 0, 0);                                                      
+    border: 0;                                                                   
+} 

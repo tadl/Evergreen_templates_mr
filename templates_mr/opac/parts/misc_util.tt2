@@ -7,7 +7,7 @@
         FOR node IN xml.findnodes('//*[@tag="' _ target_field _ '"]');
             raw_vals = [];
             core_val = '';
-            FOR subnode IN node.findnodes('./*[not(contains("w 0 4 5 6 8 9", @code))]');
+            FOR subnode IN node.findnodes('./*[not(contains("e w 0 4 5 6 7 8 9", @code))]');
                 raw_vals.push(subnode.textContent());
             END;
             core_val = raw_vals.join(" ");
@@ -79,6 +79,10 @@
         END;
     END;
 
+    BLOCK get_ccvm_icon;
+        ctx.media_prefix _ '/images/format_icons/' _ ccvm.ctype _ '/' _ ccvm.code _ '.png';
+    END;
+
     # Extract MARC fields from XML
     #   get_marc_attrs( { marc_xml => doc } )
     BLOCK get_marc_attrs;
@@ -87,9 +91,35 @@
         # Map item types to schema.org types; impedance mismatch :(
         args.schema.itemtype = {};
         schema_typemap = {};
-        schema_typemap.a = 'http://schema.org/Book';
-        schema_typemap.e = 'http://schema.org/Map';
-        schema_typemap.j = 'http://schema.org/MusicAlbum';
+
+        schema_typemap.bluray = 'Movie'; # Movie could also be TVSeries
+        schema_typemap.book = 'Book';
+        schema_typemap.braille = 'Book';
+        schema_typemap.casaudiobook = 'Book AudioObject';
+        schema_typemap.casmusic = 'MusicAlbum';
+        schema_typemap.cdaudiobook = 'Book AudioObject';
+        schema_typemap.cdmusic = 'MusicAlbum';
+        schema_typemap.dvd = 'Movie';
+        schema_typemap.eaudio = 'AudioObject';
+        schema_typemap.ebook = 'Book';
+        # schema_typemap.equip = '';
+        schema_typemap.evideo = 'Movie';
+        # schema_typemap.kit = '';
+        schema_typemap.lpbook = 'Book';
+        schema_typemap.map = 'Map';
+        # schema_typemap.microform = '';
+        schema_typemap.music = 'MusicAlbum';
+        schema_typemap.phonomusic = 'MusicAlbum';
+        # schema_typemap.phonospoken = '';
+        # schema_typemap.picture = ''; Painting or Photograph?
+        schema_typemap.score = 'Book'; # schema.org has no generic Music type
+        schema_typemap.serial = 'Periodical';
+        schema_typemap.software = 'SoftwareApplication';
+        schema_typemap.vhs = 'Movie';
+
+        schema_typemap.a = 'Book';
+        schema_typemap.e = 'Map';
+        schema_typemap.j = 'MusicAlbum';
 
         # Hard-coded to match defaults in config.copy_status for all OPAC-visible statuses
         schema_copy_status = {};
@@ -107,9 +137,16 @@
             args.isbns.push(isbn.textContent);
         END;
 
+        # UPCs can be identified either by ind1="1" or subfield 2 of "upc"
         args.upcs = [];
-        FOR upc IN xml.findnodes('//*[@tag="024"]/*[@code="a"]');
+        FOR upc IN xml.findnodes('//*[@tag="024" and @ind="1"]/*[@code="a"]');
             args.upcs.push(upc.textContent);
+        END;
+        FOR upcfield IN xml.findnodes('//*[@tag="024"]/*[@code="2" and text()="upc"]');
+            my_parent = upcfield.parentNode();
+            FOR upc IN my_parent.findnodes('./*[@code="a"]');
+                args.upcs.push(upc.textContent);
+            END;
         END;
         args.upc = args.upcs.0; # use first UPC as the default
 
@@ -171,8 +208,76 @@
         END;
         args.pubdate = (args.pubdates.size) ? args.pubdates.0 : '';
 
-        # Full publisher info
-        args.pubinfo = "$args.pubplace $args.publisher $args.pubdate";
+        # Get RDA Copyright Info.
+        args.copyrights = [];
+        FOR sub IN xml.findnodes('//*[@tag="264" and @ind2="4"]/*[@code="c"]');
+            args.copyrights.push(sub.textContent);
+        END;
+        args.copyright = (args.copyrights.size) ? args.copyrights.0 : '';
+
+        IF args.copyright.length >= 4;
+            args.copyrightYear = args.copyright.match('(\d{4})');
+            IF args.copyrightYear;
+                args.copyrightYear = args.copyrightYear.0;
+            END;
+        END;
+
+        # Get the RDA Production info.
+        args.producers = [];
+        FOR sub IN xml.findnodes('//*[@tag="264" and @ind2="0"]/*[@code="b"]');
+            args.producers.push(sub.textContent);
+        END;
+        args.producer = (args.producers.size) ? args.producers.0 : '';
+
+        args.prodplaces = [];
+        FOR sub IN xml.findnodes('//*[@tag="264" and @ind2="0"]/*[@code="a"]');
+            args.prodplaces.push(sub.textContent);
+        END;
+        args.prodplace = (args.prodplaces.size) ? args.prodplaces.0 : '';
+
+        args.proddates = [];
+        FOR sub IN xml.findnodes('//*[@tag="264" and @ind2="0"]/*[@code="c"]');
+            args.proddates.push(sub.textContent);
+        END;
+        args.proddate = (args.proddates.size) ? args.proddates.0 : '';
+
+        # Get the RDA Distribution args.
+        args.distributors = [];
+        FOR sub IN xml.findnodes('//*[@tag="264" and @ind2="2"]/*[@code="b"]');
+            args.distributors.push(sub.textContent);
+        END;
+        args.distributor = (args.distributors.size) ? args.distributors.0 : '';
+
+        args.distplaces = [];
+        FOR sub IN xml.findnodes('//*[@tag="264" and @ind2="2"]/*[@code="a"]');
+            args.distplaces.push(sub.textContent);
+        END;
+        args.distplace = (args.distplaces.size) ? args.distplaces.0 : '';
+
+        args.distdates = [];
+        FOR sub IN xml.findnodes('//*[@tag="264" and @ind2="2"]/*[@code="c"]');
+            args.distdates.push(sub.textContent);
+        END;
+        args.distdate = (args.distdates.size) ? args.distdates.0 : '';
+
+        # Get the RDA Manufacture args.
+        args.manufacturers = [];
+        FOR sub IN xml.findnodes('//*[@tag="264" and @ind2="3"]/*[@code="b"]');
+            args.manufacturers.push(sub.textContent);
+        END;
+        args.manufacturer = (args.manufacturers.size) ? args.manufacturers.0 : '';
+
+        args.manplaces = [];
+        FOR sub IN xml.findnodes('//*[@tag="264" and @ind2="3"]/*[@code="a"]');
+            args.manplaces.push(sub.textContent);
+        END;
+        args.manplace = (args.manplaces.size) ? args.manplaces.0 : '';
+
+        args.mandates = [];
+        FOR sub IN xml.findnodes('//*[@tag="264" and @ind2="3"]/*[@code="c"]');
+            args.mandates.push(sub.textContent);
+        END;
+        args.mandate = (args.mandates.size) ? args.mandates.0 : '';
 
         # RDA adds 264 to the pubinfo 880 consideration mix
         graphic_880s = [];
@@ -335,6 +440,11 @@
                     res.href = uri.getAttribute('href');
                     res.link = uri.getAttribute('label');
                     res.note = uri.getAttribute('use_restriction');
+                    # Avoid displaying the href as the link text if we can display the note instead
+                    IF res.link == res.href AND res.note;
+                        res.link = res.note;
+                        res.note = '';
+                    END;
                     args.uris.push(res);
                 END;
                 NEXT;
@@ -424,15 +534,29 @@
         END;
 
         # "mattype" == "custom marc format specifier"
-        FOR icon_style IN ['mattype', 'item_type']; 
-            node = xml.findnodes(
-                '//*[local-name()="attributes"]/*[local-name()="field"][@name="' _ icon_style _ '"]');
+        icon_style = ctx.get_cgf('opac.icon_attr').value || 'item_type';
+        formats_xpath = '//*[local-name()="attributes"]/*[local-name()="field"][@name="' _ icon_style _ '"]';
+
+        args.all_formats = [];
+        FOR node IN xml.findnodes(formats_xpath);
             IF node AND node.textContent;
-                type = node.textContent;
-                args.format_label = node.getAttribute('coded-value')
-                args.schema.itemtype = schema_typemap.$type || 'CreativeWork';
-                args.format_icon = ctx.media_prefix _ '/images/format_icons/' _ icon_style _ '/' _ type _ '.png';
-                LAST;
+                ccvm = ctx.get_ccvm(node.getAttribute('cvmid'));
+                NEXT IF ccvm.opac_visible == 'f';
+
+                format = {};
+                type = ccvm.code.remove('-'); # blu-ray to bluray
+                format.label = ccvm.search_label || ccvm.value;
+                format.icon = PROCESS get_ccvm_icon ccvm=ccvm;
+                format.itemtype = schema_typemap.$type || 'CreativeWork';
+
+                args.all_formats.push(format); # metarecords want all formats
+
+                IF !args.format_label;
+                    # use the first format as the default
+                    args.format_label = format.label; 
+                    args.schema.itemtype = format.itemtype;
+                    args.format_icon = format.icon;
+                END;
             END;
         END;
 	
