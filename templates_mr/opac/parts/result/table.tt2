@@ -188,6 +188,62 @@ END;
                                                             </td>
                                                         </tr>
 
+                                                        [% IF args.pubinfo %]
+                                                        <tr name='bib_pubinfo' class='result_table_summary'>
+                                                            <td valign='top' colspan='2' class='result_table_summary'>
+                                                                [% args.pubinfo | html %]
+                                                            </td>
+                                                        </tr>
+                                                        [% END %]
+
+                                                        [% IF args.publisher %]
+                                                        <tr name='bib_publisher' class='result_table_summary'>
+                                                            <td valign='top' colspan='2' class='result_table_summary'>
+                                                                [% args.publisher | html %]
+                                                            </td>
+                                                        </tr>
+                                                        [% END %]
+
+                                                        [% IF args.pubplace %]
+                                                        <tr name='bib_pubplace' class='result_table_summary'>
+                                                            <td valign='top' colspan='2' class='result_table_summary'>
+                                                                [% args.pubplace | html %]
+                                                            </td>
+                                                        </tr>
+                                                        [% END %]
+
+                                                        [% IF args.pubdate %]
+                                                        <tr name='bib_pubdate' class='result_table_summary'>
+                                                            <td valign='top' colspan='2' class='result_table_summary'>
+                                                                [% args.pubdate | html %]
+                                                            </td>
+                                                        </tr>
+                                                        [% END %]
+
+                                                        [% IF attrs.isbns.size > 0 %]
+                                                        <tr name="bib_isbn">
+                                                            <td valign='top' colspan='2' class='result_table_summary'>
+                                                                [% attrs.isbns.0 | html %]
+                                                            </td>
+                                                        </tr>
+                                                        [% END %]
+
+                                                        [%- IF attrs.issns.size > 0 %]
+                                                        <tr name="bib_issn">
+                                                            <td valign='top' colspan='2' class='result_table_summary'>
+                                                                [% attrs.issns.0 | html %]
+                                                            </td>
+                                                        </tr>
+                                                        [%- END %]
+
+                                                        [% IF attrs.phys_desc %]
+                                                        <tr name="bib_phys_desc">
+                                                            <td valign='top' colspan='2' class='result_table_summary'>
+                                                                [% attrs.phys_desc | html %]
+                                                            </td>
+                                                        </tr>
+                                                        [%- END %]
+
                                                         [% IF CGI.param('detail_record_view') %]
                                                         <!-- These fields are visible when viewing the results page in 'detailed' mode -->
 
