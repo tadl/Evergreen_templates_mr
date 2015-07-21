@@ -168,6 +168,18 @@ END;
                                                         </tr>
                                                         [% END %]
 
+                                                        <tr name='bib_summary_full' class='result_table_summary'>
+                                                            <td valign='top' colspan='2'>[% args.summaries.0 | html %]</td>
+                                                        </tr>
+
+                                                        <tr name='bib_contents_full' class='result_table_summary'>
+                                                            <td valign='top' colspan='2'>
+                                                            [% FOR content IN args.contents_list; %]
+                                                                [% content _ ' ' | html %]
+                                                            [% END %]
+                                                            </td>
+                                                        </tr>
+
                                                         [% IF CGI.param('detail_record_view') %]
                                                         <!-- These fields are visible when viewing the results page in 'detailed' mode -->
 
