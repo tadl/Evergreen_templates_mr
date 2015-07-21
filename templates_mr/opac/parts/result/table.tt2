@@ -168,6 +168,14 @@ END;
                                                         </tr>
                                                         [% END %]
 
+                                                        [% IF args.ezproxy %]
+                                                        <tr name='bib_uri_list' class='result_table_title_cell'>
+                                                            <td valign='top'>
+                                                                <a href="[% args.uris.0.href | html %]">[% args.uris.0.link | html %]</a>
+                                                            </td>
+                                                        </tr>
+                                                        [% END %]
+
                                                         <tr name='bib_summary_full' class='result_table_summary'>
                                                             <td valign='top' colspan='2'>[% args.summaries.0 | html %]</td>
                                                         </tr>

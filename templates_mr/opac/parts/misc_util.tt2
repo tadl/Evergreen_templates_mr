@@ -445,7 +445,14 @@
                         res.link = res.note;
                         res.note = '';
                     END;
+                    # If we STILL have something starting with http, replace it with a fixed string
+                    IF res.link.match('^http');
+                        res.link = 'Connect to resource';
+                    END;
                     args.uris.push(res);
+                    IF res.href.match('^http://via.tadl.org/');
+                        args.ezproxy = 1;
+                    END;
                 END;
                 NEXT;
             ELSE;
