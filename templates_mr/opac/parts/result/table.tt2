@@ -223,7 +223,9 @@ END;
                                                         [% IF attrs.isbns.size > 0 %]
                                                         <tr name="bib_isbn">
                                                             <td valign='top' colspan='2' class='result_table_summary'>
-                                                                [% attrs.isbns.0 | html %]
+                                                                [% FOREACH isbn_value IN attrs.isbns %]
+                                                                    <div class="bib_isbn">[% isbn_value | html %]</div>
+                                                                [% END %]
                                                             </td>
                                                         </tr>
                                                         [% END %]
