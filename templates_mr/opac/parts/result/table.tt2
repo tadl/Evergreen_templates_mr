@@ -246,6 +246,8 @@ END;
                                                         </tr>
                                                         [%- END %]
 
+                                                        <div class="all_subjects">[%- INCLUDE "opac/parts/result/subjects.tt2" %]</div>
+
                                                         [% IF CGI.param('detail_record_view') %]
                                                         <!-- These fields are visible when viewing the results page in 'detailed' mode -->
 
