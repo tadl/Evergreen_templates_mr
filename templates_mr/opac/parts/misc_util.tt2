@@ -172,7 +172,7 @@
         titresults_content = [];
         FOR sub IN titresults;
             IF sub.getAttribute('code') == 'a' && tc.defined;
-                titresults_content.push(tc.title(sub.textContent));
+                titresults_content.push(tc.title(sub.textContent.replace(' :$',':')));
             ELSIF sub.getAttribute('code') == 'b' && tc.defined;
                 titresults_content.push(tc.title(sub.textContent));
             ELSE;
