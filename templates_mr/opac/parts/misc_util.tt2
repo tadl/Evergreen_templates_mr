@@ -167,6 +167,18 @@
         END;
         args.author = (args.authors.size) ? args.authors.0 : '';
 
+        FOR sub IN xml.findnodes('//*[@tag="250" or @tag="300"]/*[@code="a"]');
+            IF sub.textContent.match('(?i)large print');
+                args.large_print = 1;
+            END;
+        END;
+
+        FOR sub IN xml.findnodes('//*[@tag="650" or @tag="655"]/*[@code="a"]');
+            IF sub.textContent.match('(?i)Large print books') or sub.textContent.match('(?i)Large type books');
+                args.large_print = 1;
+            END;
+        END;
+
         # Include subfields 'abnp' to generate a more comprehensive title display in search results
         titresults = xml.findnodes('//*[@tag="245"]/*[@code="a" or @code="b" or @code="n" or @code="p"]');
         titresults_content = [];
@@ -182,6 +194,9 @@
         args.title = titresults_content.join(" ");
         # Avoid ugly trailing syntax on brief titles
         args.title = args.title | replace('[:;/]$', '');
+        IF args.large_print == 1;
+            args.title = args.title _ " (LARGE PRINT)";
+        END;
 
         graphic_880s = [];
         get_graphic_880s(target_field='245');
@@ -191,6 +206,9 @@
             args.titles.push(title.primary.value);
         END;
         args.title_extended = (args.titles.size) ? args.titles.0 : '';
+        IF args.large_print == 1;
+            args.title_extended = args.title_extended _ " (LARGE PRINT)";
+        END;
 
         args.pubplaces = [];
         pubplace_hunt = xml.findnodes('//*[@tag="260"]/*[@code="a"]') ||
