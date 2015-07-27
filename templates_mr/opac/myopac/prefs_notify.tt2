@@ -34,7 +34,7 @@
                 <td>
                     <input id='[% setting %].email' name='[% setting %].email' 
                         type="checkbox" title="[% email_label %]"
-                        [% IF (matches = ctx.user_setting_map.$setting.match('email')); %] checked='checked' [% END %]/>
+                        [% IF !ctx.user_setting_map.exists(setting) OR (matches = ctx.user_setting_map.$setting.match('email')); %] checked='checked' [% END %]/>
                 </td>
             </tr>
             [%- IF allow_phone_notifications == 'true';
@@ -46,7 +46,7 @@
                 <td>
                     <input id='[% setting %].phone' name='[% setting %].phone' 
                         type="checkbox" title="[% phone_label %]"
-                        [% IF (matches = ctx.user_setting_map.$setting.match('phone')); %] checked='checked' [% END %]/>
+                        [% IF !ctx.user_setting_map.exists(setting) OR (matches = ctx.user_setting_map.$setting.match('phone')); %] checked='checked' [% END %]/>
                 </td>
             </tr>
             [% setting = 'opac.default_phone' %]
