@@ -143,6 +143,123 @@
     </div>
 
 </div>
+<div id="acct_info_main">
+
+    <table width='70%' title="[% l('Account preference') %]"
+        class='light_border data_grid'>
+        <tbody id='myopac_summary_tbody'>
+            <tr>
+                <td width='30%'
+                    class='color_4 light_border'>[% l("Name") %]</td>
+
+                <td class='light_border'>[% l(
+                    HUMAN_NAME_FORMAT,
+                    ctx.user.prefix, ctx.user.first_given_name,
+                    ctx.user.second_given_name, ctx.user.family_name,
+                    ctx.user.suffix
+                ) | html %]</td>
+
+                <td></td>
+            </tr>
+
+            <tr>
+                <td class='color_4 light_border'>[% l("Day Phone") %]</td>
+                <td class='light_border'>[% ctx.user.day_phone | html %]</td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <td class='color_4 light_border'>[% l("Evening Phone") %]</td>
+                <td class='light_border'>[% ctx.user.evening_phone | html %]</td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <td class='color_4 light_border'>[% l("Other Phone") %]</td>
+                <td class='light_border'>[% ctx.user.other_phone | html %]</td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <td class='color_4 light_border'>
+                    <div style="position:absolute">
+                   </div>[% l("Username") %]
+                </td>
+                <td class='light_border'>[% ctx.user.usrname | html %]</td>
+                [%- IF ctx.username_change_disallowed %]
+                <td></td>
+                [%- ELSE %]
+                <td class='light_border'><a href='update_username'
+                    title="[% l('Change Username') %]">[% l("Change") %]</a></td>
+                [%- END %]
+            </tr>
+            <tr>
+                <td class='color_4 light_border'>[% l("Password") %]</td>
+                <td class='light_border'>[% l("(not shown)") %]</td>
+                [%- IF disable_password_change == 'true' %]
+                <td></td>
+                [%- ELSE %]
+                <td class='light_border'><a href='update_password'
+                    title="[% l('Change Password') %]">[% l("Change") %]</a></td>
+                [%- END %]
+            </tr>
+            <tr>
+                <td class='color_4 light_border'>[% l("Email Address") %]</td>
+                <td class='light_border'>[% ctx.user.email | html %]</td>
+                [%- IF disable_email_change == 'true' %]
+                <td></td>
+                [%- ELSE %]
+                <td class='light_border'><a href='update_email'
+                    title="[% l('Update Email Address') %]">[% l('Change') %]</a></td>
+                [%- END %]
+            </tr>
+            <tr>
+                <td class='color_4 light_border'>[% l("Holdshelf Alias") %]</td>
+                <td class='light_border'>[% ctx.user.alias | html %]</td>
+                <td class='light_border'><a href='update_alias'>[% l('Change') %]</a></td>
+            </tr>
+            <tr>
+                <td class='color_4 light_border'>[% l("MeLCat ID") %]</td>
+                <td class='light_border'>[% ctx.user.id | html %]</td>
+                <td></td>
+            </tr>
+
+            [% IF ctx.user.ident_value %]<tr class="hide_me">
+                <td class='color_4 light_border'>
+                [% l("Primary Identification") %]</td>
+
+                <td class='light_border'>
+                    [%
+                    # l('[_1] ([_2])', ctx.user.ident_value, ctx.user.ident_type.name) | html
+                    # XXX uncomment the above line to show primary
+                    # identification. With a minor tweak it could
+                    # alternatively be shown but partially obscured.
+                    %]
+                </td>
+                <td></td>
+            </tr>[% END %]
+
+            <tr>
+                <td class='color_4 light_border'>[% l("Active Barcode") %]</td>
+                <td class='light_border'>[% ctx.user.card.barcode %]</td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <td class='color_4 light_border'>[% l("Home Library") %]</td>
+                <td class='light_border'>[% ctx.user.home_ou.name | html %]</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class='color_4 light_border'>[% l("Account Creation Date") %]</td>
+                <td class='light_border'>[% date.format(ctx.parse_datetime(ctx.user.create_date), DATE_FORMAT) %]</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table><br />
+    <hr class='opac-auto-013' color="#DCDBDB" />
+    <br />
+</div>
 [% END %]
 
 
