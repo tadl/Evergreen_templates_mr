@@ -58,9 +58,7 @@
                 </td>
             </tr>
             [%- END %]
-            [%- IF ctx.get_org_setting(ctx.search_ou, 'sms.enable') == 1;
-               setting = 'opac.hold_notify';
-            -%]
+            [% setting = 'opac.hold_notify'; %]
             <tr>
                 [% sms_label = l('Notify by Text by default when a hold is ready for pickup?') %]
                 <td><label for='[% setting %].sms'>[% sms_label %]</label></td>
@@ -69,10 +67,6 @@
                         type="checkbox" title="[% sms_label %]"
                         [% IF (matches = ctx.user_setting_map.$setting.match('sms')); %] checked='checked' [% END %]/>
                 </td>
-            </tr>
-            <tr>
-                <td>[% l('Default Mobile Carrier') %]</td>
-                <td>[% INCLUDE "opac/parts/sms_carrier_selector.tt2" sms_carrier_hide_label="true" %]</td>
             </tr>
             [% setting = 'opac.default_sms_notify' %]
             <tr>
@@ -83,7 +77,6 @@
                     [% l('Hint: use the full 10 digits of your phone #, no spaces, no dashes'); %]
                 </td>
             </tr>
-            [% END %]
         </tbody>
     </table>
 
