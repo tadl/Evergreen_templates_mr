@@ -1,4 +1,5 @@
 [%  PROCESS "opac/parts/header.tt2";
+    PROCESS "opac/parts/org_selector.tt2";
     WRAPPER "opac/parts/myopac/prefs_base.tt2";
     myopac_page = "prefs";
     prefs_page = 'prefs_notify' %]
@@ -105,6 +106,43 @@
     [% END %]
     <input type='submit' value="[% l('Save') %]" class="opac-button" />
 </form>
+
+<h2>Additional Settings</h2>
+<div id="additional-settings">
+
+    <div id="search_location">
+        <span class="setting_key">search_location</span>
+        <span class="setting_value">
+            [% search_location = ctx.user.home_ou.id %]
+            [% IF ctx.user_setting_map.item('opac.default_search_location') %]
+                [% search_location = ctx.user_setting_map.item('opac.default_search_location') %]
+            [% END %]
+            [% INCLUDE build_org_selector name='opac.default_search_location' value=search_location %]
+        </span>
+    </div>
+
+    <div id="pickup_location">
+        <span class="setting_key">pickup_location</span>
+        <span class="setting_value">
+            [% pickup_location = ctx.user.home_ou.id %]
+            [% IF ctx.user_setting_map.item('opac.default_pickup_location') %]
+                [% pickup_location = ctx.user_setting_map.item('opac.default_pickup_location') %]
+            [% END %]
+            [% INCLUDE build_org_selector name='opac.default_pickup_location' value=pickup_location %]
+        </span>
+    </div>
+
+    <div>
+        <span class="setting_key">circ_history</span>
+        <span class="setting_value">[% IF ctx.user_setting_map.item('history.circ.retention_start'); %]TRUE[% ELSE; %]FALSE[% END; %]</span>
+    </div>
+
+    <div>
+        <span class="setting_key">hold_history</span>
+        <span class="setting_value">[% IF ctx.user_setting_map.item('history.hold.retention_start'); %]TRUE[% ELSE; %]FALSE[% END; %]</span>
+    </div>
+
+</div>
 [% END %]
 
 
