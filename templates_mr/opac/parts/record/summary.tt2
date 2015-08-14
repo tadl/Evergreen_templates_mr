@@ -10,7 +10,8 @@
 [%-# This holds the record summary information %]
 <div id="rdetail_summary_header">
     <div id='rdetail_title_div'>
-        <h1 id='rdetail_title' property="name">[% attrs.title_extended | html %]</h1>
+        <h1 id='rdetail_title' property="name">[% attrs.title | html %]</h1>
+        <h2 id='rdetail_title_extended'>[% attrs.title_extended | html %]</h2>
         [%-
             FOR link880 IN attrs.graphic_titles;
                 FOR alt IN link880.graphic;
