@@ -148,6 +148,7 @@
                         </div>
                     </td>
                     <td>
+                        <span class="marc_record_type">[% attrs.marc_record_type %]</span>
                         <div class="format_icon">
                           [% 
                             formats = attrs.all_formats;

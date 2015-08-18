@@ -134,6 +134,7 @@ END;
 
                                                     </div>
                                                     <div class='result_table_title_cell'>
+                                                    <span class="marc_record_type">[% attrs.marc_record_type %]</span>
                                                     [%- IF attrs.format_label; %]
                                                         [% FOR format IN attrs.all_formats %]
                                                             <img title="[% format.label | html %]" 

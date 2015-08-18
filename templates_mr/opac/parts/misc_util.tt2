@@ -132,6 +132,9 @@
         schema_copy_status.9 = '<link property="availability" href="http://schema.org/PreOrder" />'; # On order
         schema_copy_status.12 = '<link property="availability" href="http://schema.org/InStoreOnly" />'; # Reserves
 
+        # for a fallback "format", select the MARC record type from the leader
+        args.marc_record_type = xml.findnodes('//*[local-name()="leader"]').textContent.substr(6,1)
+
         args.isbns = [];
         FOR isbn IN xml.findnodes('//*[@tag="020"]/*[@code="a"]');
             args.isbns.push(isbn.textContent);

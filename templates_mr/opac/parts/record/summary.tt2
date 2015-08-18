@@ -24,6 +24,7 @@
             END;
         -%]
         <div id='rdetail_simple_author'>[% attrs.author %]</div>
+        <span class="marc_record_type">[% attrs.marc_record_type %]</span>
         [%- INCLUDE "opac/parts/record/authors.tt2" %]
     </div>
     <div id="rdetail_image_div">
