@@ -437,6 +437,9 @@ END;
                                                         [% note.note | html %]
                                                     </div>
                                                         [% END %]
+                                                    <div class="result-bookbag-item-id">
+                                                        [% ctx.bookbag_items_by_bre_id.$rec_id.id | html %]
+                                                    </div>
                                                     [% END %]
                                                 </div>
                                                 <div class="result_table_utils_cont">
