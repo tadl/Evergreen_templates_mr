@@ -433,6 +433,9 @@ END;
                                                     [% IF ctx.bookbag;
                                                         rec_id = rec.id;
                                                         FOR note IN ctx.bookbag_items_by_bre_id.$rec_id.notes %]
+                                                    <div class="result-bookbag-item-note-id">
+                                                        [% note.id | html %]
+                                                    </div>
                                                     <div class="result-bookbag-item-note">
                                                         [% note.note | html %]
                                                     </div>
